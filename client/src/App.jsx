@@ -6,6 +6,7 @@ import Home from "./pages/Home";
 import Footer from "./components/Footer";
 import { useAppContext } from "./context/AppContext";
 import Login from "./components/Login";
+import AllProducts from "./pages/AllProducts";
 
 function App() {
   const { showUserLogin } = useAppContext();
@@ -20,6 +21,7 @@ function App() {
         className={`${isSellerPtah ? "" : "px-6 md:px-16 lg:px-24 xl:px-32"}`}>
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/products" element={<AllProducts />} />
         </Routes>
       </div>
       {!isSellerPtah && <Footer />}
@@ -29,4 +31,4 @@ function App() {
 
 export default App;
 
-//02:25:15
+//02:38:25
