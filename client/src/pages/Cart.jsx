@@ -9,7 +9,7 @@ const Cart = () => {
     cartItems,
     removeFromCart,
     getCartCount,
-    updateCartItems,
+    updateCartItem,
     navigate,
     getCartAmount,
   } = useAppContext();
@@ -17,7 +17,7 @@ const Cart = () => {
   const [cartArray, setCartArray] = useState([]);
   const [addresses, setAddresses] = useState(dummyAddress);
   const [showAddress, setShowAddress] = useState(false);
-  const [selectedAddress, setselectedAddress] = useState(dummyAddress[0]);
+  const [selectedAddress, setSelectedAddress] = useState(dummyAddress[0]);
   const [paymentOption, setPaymentOption] = useState("COD");
 
   function getCart() {
@@ -28,6 +28,10 @@ const Cart = () => {
       tempArray.push(product);
     }
     setCartArray(tempArray);
+  }
+
+  async function placeOrder() {
+    console.log(`placeOrder f(x) ✅`);
   }
 
   useEffect(() => {
@@ -77,7 +81,13 @@ const Cart = () => {
                   </p>
                   <div className="flex items-center">
                     <p>Qty:</p>
-                    <select className="outline-none">
+                    <select
+                      onChange={(evt) =>
+                        updateCartItem(product._id, Number(evt.target.value))
+                      }
+                      value={cartItems[product._id]}
+                      className="outline-none"
+                      >
                       {Array(
                         cartItems[product._id] > 9 ? cartItems[product._id] : 9
                       )
@@ -97,7 +107,7 @@ const Cart = () => {
               {product.offerPrice * product.quantity}
             </p>
             <button
-              onClick={() => removeFromCart()}
+              onClick={() => removeFromCart(product._id)}
               className="cursor-pointer mx-auto">
               <img
                 src={assets.remove_icon}
@@ -144,13 +154,20 @@ const Cart = () => {
             </button>
             {showAddress && (
               <div className="absolute top-12 py-1 bg-white border border-gray-300 text-sm w-full">
+                {addresses.map((address, idx) => (
+                  <p
+                    key={idx}
+                    onClick={() => {
+                      setSelectedAddress(address);
+                      setShowAddress(false);
+                    }}
+                    className="text-gray-500 p-2 hover:bg-gray-100">
+                    {address.street},{selectedAddress.city}, $
+                    {selectedAddress.state}, ${selectedAddress.country}
+                  </p>
+                ))}
                 <p
-                  onClick={() => setShowAddress(false)}
-                  className="text-gray-500 p-2 hover:bg-gray-100">
-                  New York, USA
-                </p>
-                <p
-                  onClick={() => setShowAddress(false)}
+                  onClick={() => navigate("/add-address")}
                   className="text-primary text-center cursor-pointer p-2 hover:bg-primary/10">
                   Add address
                 </p>
@@ -160,7 +177,9 @@ const Cart = () => {
 
           <p className="text-sm font-medium uppercase mt-6">Payment Method</p>
 
-          <select className="w-full border border-gray-300 bg-white px-3 py-2 mt-2 outline-none">
+          <select
+            onChange={(evt) => setPaymentOption(evt.target.value)}
+            className="w-full border border-gray-300 bg-white px-3 py-2 mt-2 outline-none">
             <option value="COD">Cash On Delivery</option>
             <option value="Online">Online Payment</option>
           </select>
@@ -171,7 +190,10 @@ const Cart = () => {
         <div className="text-gray-500 mt-4 space-y-2">
           <p className="flex justify-between">
             <span>Price</span>
-            <span>$20</span>
+            <span>
+              {currency}
+              {getCartAmount()}
+            </span>
           </p>
           <p className="flex justify-between">
             <span>Shipping Fee</span>
@@ -179,16 +201,24 @@ const Cart = () => {
           </p>
           <p className="flex justify-between">
             <span>Tax (2%)</span>
-            <span>$20</span>
+            <span>
+              {currency}
+              {(getCartAmount() * 2) / 100}
+            </span>
           </p>
           <p className="flex justify-between text-lg font-medium mt-3">
             <span>Total Amount:</span>
-            <span>$20</span>
+            <span>
+              {currency}
+              {(getCartAmount() + getCartAmount() * 2) / 100}
+            </span>
           </p>
         </div>
 
-        <button className="w-full py-3 mt-6 cursor-pointer bg-primary text-white font-medium hover:bg-indigo-600 transition">
-          Place Order
+        <button
+          onClick={placeOrder}
+          className="w-full py-3 mt-6 cursor-pointer bg-primary text-white font-medium hover:bg-primary-dull transition">
+          {paymentOption === "COD" ? "Place Order" : "Proceed To Checkout"}
         </button>
       </div>
     </div>
