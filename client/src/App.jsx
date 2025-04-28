@@ -9,6 +9,7 @@ import Login from "./components/Login";
 import AllProducts from "./pages/AllProducts";
 import ProductCategory from "./pages/ProductCategory";
 import ProductDetails from "./pages/ProductDetails";
+import Cart from "./pages/Cart";
 
 function App() {
   const { showUserLogin } = useAppContext();
@@ -26,6 +27,7 @@ function App() {
           <Route path="/products" element={<AllProducts />} />
           <Route path="/products/:category" element={<ProductCategory />} />
           <Route path="/products/:category/:id" element={<ProductDetails />} />
+          <Route path="/cart" element={<Cart />} />
         </Routes>
       </div>
       {!isSellerPtah && <Footer />}
@@ -35,4 +37,4 @@ function App() {
 
 export default App;
 
-//03:25:00
+//03:46:20
