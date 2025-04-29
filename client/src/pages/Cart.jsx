@@ -15,7 +15,8 @@ const Cart = () => {
   } = useAppContext();
 
   const [cartArray, setCartArray] = useState([]);
-  const [addresses, setAddresses] = useState(dummyAddress);
+  //const [addresses, setAddresses] = useState(dummyAddress);
+  const [addresses] = useState(dummyAddress);
   const [showAddress, setShowAddress] = useState(false);
   const [selectedAddress, setSelectedAddress] = useState(dummyAddress[0]);
   const [paymentOption, setPaymentOption] = useState("COD");
@@ -86,8 +87,7 @@ const Cart = () => {
                         updateCartItem(product._id, Number(evt.target.value))
                       }
                       value={cartItems[product._id]}
-                      className="outline-none"
-                      >
+                      className="outline-none">
                       {Array(
                         cartItems[product._id] > 9 ? cartItems[product._id] : 9
                       )
@@ -162,8 +162,8 @@ const Cart = () => {
                       setShowAddress(false);
                     }}
                     className="text-gray-500 p-2 hover:bg-gray-100">
-                    {address.street},{selectedAddress.city}, $
-                    {selectedAddress.state}, ${selectedAddress.country}
+                    {address.street},{selectedAddress.city},
+                    {selectedAddress.state}, {selectedAddress.country}
                   </p>
                 ))}
                 <p
