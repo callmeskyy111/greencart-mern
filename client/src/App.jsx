@@ -12,13 +12,18 @@ import ProductDetails from "./pages/ProductDetails";
 import Cart from "./pages/Cart";
 import AddAddress from "./pages/AddAddress";
 import MyOrders from "./pages/MyOrders";
+import SellerLogin from "./components/seller/SellerLogin";
+import SellerLayout from "./pages/seller/SellerLayout";
+import AddProduct from "./components/seller/AddProduct";
+import ProductList from "./components/seller/ProductList";
+import Orders from "./components/seller/Orders";
 
 function App() {
-  const { showUserLogin } = useAppContext();
+  const { showUserLogin, isSeller } = useAppContext();
   //checking if it's 'seller' path or not
   const isSellerPtah = useLocation().pathname.includes("seller");
   return (
-    <div>
+    <div className="text-default min-h-screen text-gray-700 bg-white">
       {isSellerPtah ? null : <Navbar />}
       {showUserLogin ? <Login /> : null}
       <Toaster />
@@ -32,6 +37,13 @@ function App() {
           <Route path="/cart" element={<Cart />} />
           <Route path="/add-address" element={<AddAddress />} />
           <Route path="/my-orders" element={<MyOrders />} />
+          <Route
+            path="/seller"
+            element={isSeller ? <SellerLayout /> : <SellerLogin />}>
+            <Route index element={isSeller ? <AddProduct /> : null} />
+            <Route path="product-list" element={<ProductList />} />
+            <Route path="orders" element={<Orders />} />
+          </Route>
         </Routes>
       </div>
       {!isSellerPtah && <Footer />}
@@ -41,4 +53,4 @@ function App() {
 
 export default App;
 
-//04:00:25
+//05.10.30
