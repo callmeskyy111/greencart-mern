@@ -3,6 +3,7 @@ import "dotenv/config.js";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import connectDb from "./configs/db.js";
+import userRouter from "./routes/user.route.js";
 
 const app = express();
 const port = process.env.PORT || 4000;
@@ -22,9 +23,12 @@ app.use(
   })
 );
 
+// ROUTES
 app.get("/", (_, res) => {
   res.send("<h2>🛒 GreenCart BACKEND API ✅</h2>");
 });
+
+app.use("/api/user", userRouter);
 
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port} 🛜`);
