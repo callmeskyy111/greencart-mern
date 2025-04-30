@@ -2,9 +2,12 @@ import express from "express";
 import "dotenv/config.js";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import connectDb from "./configs/db.js";
 
 const app = express();
 const port = process.env.PORT || 4000;
+
+await connectDb();
 
 // ALLOW MULTIPLE ORIGINS
 const allowedOrigins = ["http://localhost:5173"];
