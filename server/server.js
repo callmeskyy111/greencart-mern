@@ -4,6 +4,7 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import connectDb from "./configs/db.js";
 import userRouter from "./routes/user.route.js";
+import sellerRouter from "./routes/seller.route.js";
 
 const app = express();
 const port = process.env.PORT || 4000;
@@ -29,9 +30,10 @@ app.get("/", (_, res) => {
 });
 
 app.use("/api/user", userRouter);
+app.use("/api/seller", sellerRouter);
 
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port} 🛜`);
 });
 
-//06:20:17
+//todo: - 07:00:45

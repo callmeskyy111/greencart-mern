@@ -37,7 +37,6 @@ export async function registerUser(req, res) {
 }
 
 // Login User
-
 export async function loginUser(req, res) {
   try {
     const { email, password } = req.body;
@@ -76,6 +75,35 @@ export async function loginUser(req, res) {
       message: "User Successfully Logged In ✅",
       user: { email: user.email, name: user.name },
     });
+  } catch (err) {
+    console.log("🔴 COMPLETE ERROR: ", err);
+    res.json({ success: false, message: err.message });
+  }
+}
+
+// Check AUTH.
+export async function isAuth(req, res) {
+  try {
+    const userId = req.userId; // ✅ Get from req.userId
+
+    const user = await User.findById(userId).select("-password");
+    return res.json({ success: true, user });
+  } catch (err) {
+    console.log("🔴 COMPLETE ERROR: ", err);
+    res.json({ success: false, message: err.message });
+  }
+}
+
+
+// Logout User
+export async function logoutUser(req, res) {
+  try {
+    res.clearCookie("token", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
+    });
+    return res.json({ success: true, message: "Logged Out!" });
   } catch (err) {
     console.log("🔴 COMPLETE ERROR: ", err);
     res.json({ success: false, message: err.message });
