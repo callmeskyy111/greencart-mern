@@ -32,6 +32,6 @@ export async function registerUser(req, res) {
     });
   } catch (err) {
     console.log("🔴 COMPLETE ERROR: ", err);
-    res.json({ success: false, message: error.message });
+    res.json({ success: false, message: err.message });
   }
 }
