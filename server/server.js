@@ -1,15 +1,19 @@
 import express from "express";
+import cors from "cors";
 import "dotenv/config.js";
 import cookieParser from "cookie-parser";
-import cors from "cors";
-import connectDb from "./configs/db.js";
+import connectDb from "./configs/db.config.js";
 import userRouter from "./routes/user.route.js";
 import sellerRouter from "./routes/seller.route.js";
+import productRouter from "./routes/product.route.js";
+import connectCloudinary from "./configs/cloudinary.config.js";
 
 const app = express();
 const port = process.env.PORT || 4000;
 
+// CONFIG F(X).
 await connectDb();
+await connectCloudinary();
 
 // ALLOW MULTIPLE ORIGINS
 const allowedOrigins = ["http://localhost:5173"];
@@ -31,6 +35,7 @@ app.get("/", (_, res) => {
 
 app.use("/api/user", userRouter);
 app.use("/api/seller", sellerRouter);
+app.use("/api/product", productRouter);
 
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port} 🛜`);
