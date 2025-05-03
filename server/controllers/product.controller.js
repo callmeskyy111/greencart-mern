@@ -15,7 +15,7 @@ export async function addProduct(req, res) {
       })
     );
     await Product.create({ ...productData, image: imagesURL });
-    res.json({ success: true, message: "Product Added Successfully ✅" });
+    res.json({ success: true, message: "Product Added Successfully!" });
   } catch (err) {
     console.log("🔴 COMPLETE ERROR: ", err);
     res.json({ success: false, message: err.message });

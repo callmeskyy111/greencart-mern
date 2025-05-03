@@ -12,7 +12,7 @@ export async function loginSeller(req, res) {
       const token = jwt.sign({ email }, process.env.JWT_SECRET, {
         expiresIn: "2d",
       });
-      res.cookie("token", token, {
+      res.cookie("sellerToken", token, {
         httpOnly: true, // Prevent JS to access the cookie
         secure: process.env.NODE_ENV === "production", // Use secure cookies in production
         sameSite: process.env.NODE_ENV === "production" ? "none" : "strict", // CSRF protection
@@ -35,12 +35,18 @@ export async function loginSeller(req, res) {
 }
 
 // Auth. Seller
-export async function isSellerAuth(_, res) {
+export async function isSellerAuth(req, res) {
   try {
-    return res.json({ success: true });
+    const token = req.cookies.token;
+    if (!token) {
+      return res.json({ success: false, message: "Unauthorized" });
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    return res.json({ success: true, user: decoded });
   } catch (err) {
     console.log("🔴 COMPLETE ERROR: ", err);
-    res.json({ success: false, message: err.message });
+    return res.json({ success: false, message: "Invalid token" });
   }
 }
 
@@ -52,7 +58,8 @@ export async function logoutSeller(_, res) {
       secure: process.env.NODE_ENV === "production",
       sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
     });
-    return res.json({ success: true, message: "Seller Logged Out! ✅" });
+
+    return res.json({ success: true, message: "Seller Logged Out!" });
   } catch (err) {
     console.log("🔴 COMPLETE ERROR: ", err);
     res.json({ success: false, message: err.message });
