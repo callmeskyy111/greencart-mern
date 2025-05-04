@@ -45,12 +45,12 @@ export async function getSingleProduct(req, res) {
   }
 }
 
-// Change Product inStock
+// Change Product inStock-Status
 export async function changeStock(req, res) {
   try {
     const { id, inStock } = req.body;
     await Product.findByIdAndUpdate(id, { inStock });
-    res.json({ success: true, message: "STOCK updated ☑️" });
+    res.json({ success: true, message: "STOCK updated 📦" });
   } catch (err) {
     console.log("🔴 COMPLETE ERROR: ", err);
     res.json({ success: false, message: err.message });

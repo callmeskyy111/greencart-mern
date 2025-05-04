@@ -41,7 +41,7 @@ export const AppContextProvider = ({ children }) => {
     try {
       const { data } = await axios.get("/api/product/list");
       if (data.success) {
-        toast.success("Fetched All Products!");
+        //toast.success("Fetched All Products!");
         setProducts(data.products);
       } else {
         toast.error(data.message);
@@ -106,7 +106,22 @@ export const AppContextProvider = ({ children }) => {
     return Math.floor(totalAmount * 100) / 100;
   };
 
+  // Fetch User Auth-Status, User Data And Cart Items
+  const fetchUser = async () => {
+    try {
+      const { data } = await axios.get("/api/user/is-auth");
+      if (data.success) {
+        setUser(data.user);
+        setCartItems(data.user.cartItems);
+      }
+    } catch (error) {
+      console.log("🔴 ERROR: ", error);
+      setUser(null);
+    }
+  };
+
   useEffect(() => {
+    fetchUser();
     fetchSeller();
     fetchProducts();
   }, []);

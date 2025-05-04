@@ -72,7 +72,7 @@ export async function loginUser(req, res) {
     });
     return res.json({
       success: true,
-      message: "User Successfully Logged In ✅",
+      message: "User Logged In!",
       user: { email: user.email, name: user.name },
     });
   } catch (err) {
@@ -96,14 +96,14 @@ export async function isAuth(req, res) {
 
 
 // Logout User
-export async function logoutUser(req, res) {
+export async function logoutUser(_, res) {
   try {
     res.clearCookie("token", {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
     });
-    return res.json({ success: true, message: "Logged Out!" });
+    return res.json({ success: true, message: "User Logged Out!" });
   } catch (err) {
     console.log("🔴 COMPLETE ERROR: ", err);
     res.json({ success: false, message: err.message });
