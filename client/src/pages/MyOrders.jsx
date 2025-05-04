@@ -1,18 +1,32 @@
 import React, { useEffect, useState } from "react";
 import { useAppContext } from "../context/AppContext";
-import { dummyOrders } from "../assets/assets";
+//import { dummyOrders } from "../assets/assets";
+import toast from "react-hot-toast";
 
 const MyOrders = () => {
-  const { currency } = useAppContext();
+  const { currency, axios, user } = useAppContext();
   const [myOrders, setMyOrders] = useState([]);
 
   async function fetchMyOrders() {
-    setMyOrders(dummyOrders);
+    try {
+      const { data } = await axios.get("/api/order/user");
+      console.log("DATA: ", data);
+      if (data.success) {
+        setMyOrders(data.orders);
+      }else{
+        toast.error(data.message)
+      }
+    } catch (error) {
+      console.log("🔴 ERROR: ", error);
+      toast.error(error.message);
+    }
   }
 
   useEffect(() => {
-    fetchMyOrders();
-  }, []);
+    if (user) {
+      fetchMyOrders();
+    }
+  }, [user]);
 
   return (
     <div className="mt-16 pb-16">
@@ -57,9 +71,7 @@ const MyOrders = () => {
                 <div className="flex flex-col justify-center md:ml-8 mb-4 md:mb-0">
                   <p>Quantity: {item.quantity || "1"}</p>
                   <p>Status: {order.status}</p>
-                  <p>
-                    Date: {new Date(order.createdAt).toLocaleDateString()}
-                  </p>
+                  <p>Date: {new Date(order.createdAt).toLocaleDateString()}</p>
                 </div>
                 <p className="text-primary text-lg font-medium">
                   Amount: {currency}

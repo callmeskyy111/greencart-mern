@@ -26,13 +26,15 @@ export async function placeOrderCOD(req, res) {
 // Get Individual Order by User ID
 export async function getUserOrders(req, res) {
   try {
-    const { userId } = req.body;
+    //const userId = req.user._id; // ✅ Fix: get from authenticated user
+    const userId = req.userId;
     const orders = await Order.find({
       userId,
       $or: [{ paymentType: "COD" }, { isPaid: true }],
     })
       .populate("items.product address")
       .sort({ createdAt: -1 });
+
     res.json({
       success: true,
       message: "Order-Data fetched successfully ✅",
@@ -43,6 +45,7 @@ export async function getUserOrders(req, res) {
     res.json({ success: false, message: err.message });
   }
 }
+
 
 // Get All Orders for ADMIN/SELLER
 export async function getAllOrders(req, res) {

@@ -13,6 +13,7 @@ const Cart = () => {
     updateCartItem,
     navigate,
     getCartAmount,
+    setCartItems,
     axios,
     user,
   } = useAppContext();
@@ -37,7 +38,7 @@ const Cart = () => {
   async function getUserAddress() {
     try {
       const { data } = await axios.get("/api/address/get");
-      console.log("ADDRESS DATA", data);
+      //console.log("ADDRESS DATA", data);
       if (data.success) {
         setAddresses(data.addresses);
         if (data.addresses.length > 0) {
@@ -53,7 +54,32 @@ const Cart = () => {
   }
 
   async function placeOrder() {
-    console.log(`placeOrder f(x) ✅`);
+    try {
+      if (!selectedAddress) {
+        return toast.error("Please select an address first!");
+      }
+      //! PLACE ORDER WITH COD
+      if (paymentOption === "COD") {
+        const { data } = await axios.post("/api/order/cod", {
+          userId: user._id,
+          items: cartArray.map((item) => ({
+            product: item._id,
+            quantity: item.quantity,
+          })),
+          address: selectedAddress._id,
+        });
+        if (data.success) {
+          toast.success(data.message);
+          setCartItems({});
+          navigate("/my-orders");
+        } else {
+          toast.error(data.message);
+        }
+      }
+    } catch (error) {
+      console.log("🔴 ERROR: ", error);
+      toast.error(error.message);
+    }
   }
 
   useEffect(() => {
@@ -190,8 +216,8 @@ const Cart = () => {
                       setShowAddress(false);
                     }}
                     className="text-gray-500 p-2 hover:bg-gray-100">
-                    {address.street},{selectedAddress.city},
-                    {address.state}, {address.country}
+                    {address.street},{selectedAddress.city},{address.state},{" "}
+                    {address.country}
                   </p>
                 ))}
                 <p
