@@ -20,7 +20,10 @@ await connectDb();
 await connectCloudinary();
 
 // ALLOW MULTIPLE ORIGINS
-const allowedOrigins = ["http://localhost:5173"];
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://greencart-drab.vercel.app",
+];
 
 app.post("/stripe", express.raw({ type: "application/json" }), stripeWebhooks);
 
@@ -49,5 +52,3 @@ app.use("/api/order", orderRouter);
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port} 🛜`);
 });
-
-
