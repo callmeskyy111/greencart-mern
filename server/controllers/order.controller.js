@@ -1,6 +1,7 @@
 import Order from "../models/order.model.js";
 import Product from "../models/product.model.js";
-import stripe, { Stripe } from "stripe";
+import User from "../models/user.model.js";
+import stripe from "stripe";
 
 // Place Order (using COD)
 export async function placeOrderCOD(req, res) {
@@ -89,6 +90,62 @@ export async function placeOrderStripe(req, res) {
   } catch (err) {
     console.log("🔴 COMPLETE ERROR: ", err);
     res.json({ success: false, message: err.message });
+  }
+}
+
+// Stripe WebHooks to verify PAYMENTS-ACTION
+export async function stripeWebhooks(req, res) {
+  // Stripe Gateway Initialization
+  const stripeInstance = new stripe(process.env.STRIPE_SECRET_KEY);
+
+  const sig = req.headers["stripe-signature"];
+  let event;
+  try {
+    event = stripeInstance.webhooks.constructEvent(
+      request.body,
+      sig,
+      process.env.STRIPE_WEBHOOK_SECRET
+    );
+  } catch (error) {
+    res.status(400).send(`Webhook Error: ${error.message}`);
+
+    // Handle the event
+    switch (event.type) {
+      case "payment_intent.succeeded": {
+        const paymentIntent = event.data.object;
+        const paymentIntentId = paymentIntent.id;
+
+        // Getting Session MetaData
+        const session = await stripeInstance.checkout.sessions.list({
+          payment_intent: paymentIntentId,
+        });
+        const { orderId, userId } = session.data[0].metadata;
+
+        // Mark Payment As PAID
+        await Order.findByIdAndUpdate(orderId, { isPaid: true });
+
+        // Clear User Cart
+        await User.findByIdAndUpdate(userId, { cartItems: {} });
+        break;
+      }
+      case "payment_intent.payment_failed": {
+        const paymentIntent = event.data.object;
+        const paymentIntentId = paymentIntent.id;
+
+        // Getting Session MetaData
+        const session = await stripeInstance.checkout.sessions.list({
+          payment_intent: paymentIntentId,
+        });
+        const { orderId } = session.data[0].metadata;
+        await Order.findByIdAndDelete(orderId);
+        break;
+      }
+
+      default:
+        console.log(`Unhandled event type: ${event.type}`);
+        break;
+    }
+    res.json({received:true})
   }
 }
 
